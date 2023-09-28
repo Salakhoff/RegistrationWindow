@@ -28,6 +28,7 @@ class StartViewController: UIViewController {
         setConstraints()
         setupSubviews()
         addTarget()
+        workWithNotificationCenter()
     }
     
     @objc private func loginButtonTapped() {
@@ -39,6 +40,10 @@ class StartViewController: UIViewController {
         } else {
             highlightEmptyTextFields()
         }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -109,7 +114,10 @@ private extension StartViewController {
     func addTarget() {
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
     }
-    
+}
+
+// MARK: -TextFields
+extension StartViewController {
     private func setupTextFields() {
         textFields.forEach { textField in
             stackView.addArrangedSubview(textField)
@@ -158,3 +166,30 @@ extension StartViewController: UITextFieldDelegate {
     }
 }
 
+// MARK: -NotificationCenter
+extension StartViewController {
+    private func workWithNotificationCenter() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func keyboardWillShow(_ notification: Notification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            guard let lastTextField = textFields.last else { return }
+            let lastTextFieldFrame = lastTextField.convert(lastTextField.bounds, to: self.view)
+            let offset = max(0, (lastTextFieldFrame.maxY + 10) - keyboardSize.origin.y)
+            
+            UIView.animate(withDuration: 0.3) { [weak self] in
+                guard let self else { return }
+                self.view.transform = CGAffineTransform(translationX: 0, y: -offset)
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide(_ notification: Notification) {
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            guard let self else { return }
+            self.view.transform = .identity
+        }
+    }
+}
