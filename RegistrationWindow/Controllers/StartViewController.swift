@@ -16,6 +16,8 @@ class StartViewController: UIViewController {
     private let passwordTextField = UITextField()
     private let ageTextField = UITextField()
     private let nicknameTextField = UITextField()
+    private var textFields = [UITextField]()
+    
     private let stackView = UIStackView()
     
     private let loginButton = UIButton(type: .system)
@@ -29,22 +31,29 @@ class StartViewController: UIViewController {
     }
     
     @objc private func loginButtonTapped() {
-        detailVC.modalPresentationStyle = .fullScreen
-        showDetailViewController(detailVC, sender: nil)
+        let allFieldsFilled = areAllTextFieldsFilled()
+        
+        if allFieldsFilled {
+            detailVC.modalPresentationStyle = .fullScreen
+            showDetailViewController(detailVC, sender: nil)
+        } else {
+            highlightEmptyTextFields()
+        }
     }
 }
 
 // MARK: - SetupView
 private extension StartViewController {
     func setupView() {
+        textFields.append(emailTextField)
+        textFields.append(passwordTextField)
+        textFields.append(ageTextField)
+        textFields.append(nicknameTextField)
+        
         view.backgroundColor = .systemBackground
         
         view.addSubview(stackView)
         stackView.addArrangedSubview(mainLabel)
-        stackView.addArrangedSubview(emailTextField)
-        stackView.addArrangedSubview(passwordTextField)
-        stackView.addArrangedSubview(ageTextField)
-        stackView.addArrangedSubview(nicknameTextField)
         view.addSubview(loginButton)
     }
     
@@ -62,6 +71,8 @@ private extension StartViewController {
     }
     
     func setupSubviews() {
+        setupTextFields()
+        
         mainLabel.text = "Регистрация"
         mainLabel.font = .boldSystemFont(ofSize: 20)
         mainLabel.textAlignment = .center
@@ -83,11 +94,6 @@ private extension StartViewController {
         nicknameTextField.autocorrectionType = .no
         nicknameTextField.isUserInteractionEnabled = true
         
-        emailTextField.borderStyle = .roundedRect
-        passwordTextField.borderStyle = .roundedRect
-        ageTextField.borderStyle = .roundedRect
-        nicknameTextField.borderStyle = .roundedRect
-        
         stackView.spacing = 10
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -102,6 +108,53 @@ private extension StartViewController {
     
     func addTarget() {
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+    }
+    
+    private func setupTextFields() {
+        textFields.forEach { textField in
+            stackView.addArrangedSubview(textField)
+            textField.borderStyle = .roundedRect
+            textField.layer.cornerRadius = 5
+            textField.delegate = self
+        }
+    }
+    
+    func highlightEmptyTextFields() {
+        textFields.forEach { textField in
+            if textField.text?.isEmpty ?? true {
+                textField.layer.borderColor = UIColor.red.cgColor
+                textField.layer.borderWidth = 1.0
+            } else {
+                textField.layer.borderColor = nil
+                textField.layer.borderWidth = 0
+            }
+        }
+    }
+    
+    func areAllTextFieldsFilled() -> Bool {
+        return textFields.allSatisfy { textField in
+            if let text = textField.text, !text.isEmpty {
+                return true
+            }
+            return false
+        }
+    }
+}
+
+
+// MARK: -UITextFieldDelegate
+extension StartViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        switch textField {
+        case emailTextField: passwordTextField.becomeFirstResponder()
+        case passwordTextField: ageTextField.becomeFirstResponder()
+        case ageTextField: nicknameTextField.becomeFirstResponder()
+        case nicknameTextField: nicknameTextField.resignFirstResponder()
+        default: break
+        }
+        
+        return true
     }
 }
 
