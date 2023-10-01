@@ -14,9 +14,27 @@ class StartViewController: UIViewController {
     private let mainLabel = UILabel()
     private let emailTextField = UITextField()
     private let passwordTextField = UITextField()
-    private let ageTextField = UITextField()
+    private let bithdayTextField = UITextField()
     private let nicknameTextField = UITextField()
     private var textFields = [UITextField]()
+    
+    private let datePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .date
+        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.preferredDatePickerStyle = .wheels
+        
+        let calendar = Calendar(identifier: .gregorian)
+        let currentDate = Date()
+        let minDate = calendar.date(byAdding: .year, value: -100, to: currentDate)
+        let maxDate = calendar.date(byAdding: .year, value: -18, to: currentDate)
+        datePicker.minimumDate = minDate
+        datePicker.maximumDate = maxDate
+        return datePicker
+    }()
+    
+    private let toolBar = UIToolbar()
+    private var doneButton = UIBarButtonItem()
     
     private let stackView = UIStackView()
     
@@ -37,9 +55,17 @@ class StartViewController: UIViewController {
         if allFieldsFilled {
             detailVC.modalPresentationStyle = .fullScreen
             showDetailViewController(detailVC, sender: nil)
-        } else {
-            highlightEmptyTextFields()
         }
+        highlightEmptyTextFields()
+    }
+    
+    @objc func doneButtonTapped() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMMM yyyyг."
+        dateFormatter.locale = Locale(identifier: "ru_RU")
+        bithdayTextField.text = dateFormatter.string(from: datePicker.date)
+        
+        nicknameTextField.becomeFirstResponder()
     }
     
     deinit {
@@ -52,7 +78,7 @@ private extension StartViewController {
     func setupView() {
         textFields.append(emailTextField)
         textFields.append(passwordTextField)
-        textFields.append(ageTextField)
+        textFields.append(bithdayTextField)
         textFields.append(nicknameTextField)
         
         view.backgroundColor = .systemBackground
@@ -93,7 +119,7 @@ private extension StartViewController {
         passwordTextField.autocorrectionType = .no
         passwordTextField.isUserInteractionEnabled = true
         
-        ageTextField.placeholder = "Введите ваш возраст..."
+        bithdayTextField.placeholder = "Введите ваш возраст..."
         
         nicknameTextField.placeholder = "Введите ваш никнейм..."
         nicknameTextField.autocorrectionType = .no
@@ -109,6 +135,14 @@ private extension StartViewController {
         loginButton.setTitleColor(.white, for: .normal)
         loginButton.layer.cornerRadius = 10
         loginButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        bithdayTextField.inputView = datePicker
+        bithdayTextField.inputAccessoryView = toolBar
+        
+        toolBar.sizeToFit()
+        doneButton = UIBarButtonItem(title: "Готово", style: .plain, target: self, action: #selector(doneButtonTapped))
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        toolBar.setItems([flexibleSpace, doneButton], animated: false)
     }
     
     func addTarget() {
@@ -156,8 +190,8 @@ extension StartViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         switch textField {
         case emailTextField: passwordTextField.becomeFirstResponder()
-        case passwordTextField: ageTextField.becomeFirstResponder()
-        case ageTextField: nicknameTextField.becomeFirstResponder()
+        case passwordTextField: bithdayTextField.becomeFirstResponder()
+        case bithdayTextField: nicknameTextField.becomeFirstResponder()
         case nicknameTextField: nicknameTextField.resignFirstResponder()
         default: break
         }
