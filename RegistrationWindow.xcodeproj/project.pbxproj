@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17294C152AC9C7B600310545 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17294C142AC9C7B600310545 /* User.swift */; };
 		1745E1032AC54220009AA3E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1745E1022AC54220009AA3E6 /* AppDelegate.swift */; };
 		1745E1052AC54220009AA3E6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1745E1042AC54220009AA3E6 /* SceneDelegate.swift */; };
 		1745E1072AC54220009AA3E6 /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1745E1062AC54220009AA3E6 /* StartViewController.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		17294C142AC9C7B600310545 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		1745E0FF2AC54220009AA3E6 /* RegistrationWindow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RegistrationWindow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1745E1022AC54220009AA3E6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1745E1042AC54220009AA3E6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -37,6 +39,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		17294C132AC9C7A700310545 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				17294C142AC9C7B600310545 /* User.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		1745E0F62AC54220009AA3E6 = {
 			isa = PBXGroup;
 			children = (
@@ -56,6 +66,7 @@
 		1745E1012AC54220009AA3E6 /* RegistrationWindow */ = {
 			isa = PBXGroup;
 			children = (
+				17294C132AC9C7A700310545 /* Models */,
 				1745E1162AC5441A009AA3E6 /* App */,
 				1745E1172AC54447009AA3E6 /* Controllers */,
 			);
@@ -156,6 +167,7 @@
 				1745E1072AC54220009AA3E6 /* StartViewController.swift in Sources */,
 				1745E1032AC54220009AA3E6 /* AppDelegate.swift in Sources */,
 				1745E1052AC54220009AA3E6 /* SceneDelegate.swift in Sources */,
+				17294C152AC9C7B600310545 /* User.swift in Sources */,
 				1745E11C2AC5D6F9009AA3E6 /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

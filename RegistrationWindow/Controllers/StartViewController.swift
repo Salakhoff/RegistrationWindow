@@ -7,9 +7,15 @@
 
 import UIKit
 
+protocol StartViewControllerDelegate: AnyObject {
+    func getUser(modelUser: User)
+}
+
 class StartViewController: UIViewController {
     
-    private let detailVC = DetailViewController()
+    weak var delegate: StartViewControllerDelegate?
+    
+    var modelUser = User()
     
     private let mainLabel = UILabel()
     private let emailTextField = UITextField()
@@ -40,6 +46,11 @@ class StartViewController: UIViewController {
     
     private let loginButton = UIButton(type: .system)
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateTextFields()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -53,8 +64,13 @@ class StartViewController: UIViewController {
         let allFieldsFilled = areAllTextFieldsFilled()
         
         if allFieldsFilled {
+            updateModel()
+            let detailVC = DetailViewController()
             detailVC.modalPresentationStyle = .fullScreen
+            detailVC.startVC = self
             showDetailViewController(detailVC, sender: nil)
+            
+            delegate?.getUser(modelUser: modelUser)
         }
         highlightEmptyTextFields()
     }
@@ -64,7 +80,6 @@ class StartViewController: UIViewController {
         dateFormatter.dateFormat = "dd MMMM yyyyг."
         dateFormatter.locale = Locale(identifier: "ru_RU")
         bithdayTextField.text = dateFormatter.string(from: datePicker.date)
-        
         nicknameTextField.becomeFirstResponder()
     }
     
@@ -147,6 +162,25 @@ private extension StartViewController {
     
     func addTarget() {
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+    }
+    
+    func updateModel() {
+        modelUser.email = emailTextField.text ?? ""
+        modelUser.password = passwordTextField.text ?? ""
+        modelUser.birthday = bithdayTextField.text ?? ""
+        modelUser.nickname = nicknameTextField.text ?? ""
+    }
+    
+    func updateTextFields() {
+        textFields.forEach { textField in
+            switch textField {
+            case emailTextField: emailTextField.text = modelUser.email
+            case passwordTextField: passwordTextField.text = modelUser.password
+            case bithdayTextField: bithdayTextField.text = modelUser.birthday
+            case nicknameTextField: nicknameTextField.text = modelUser.nickname
+            default: break
+            }
+        }
     }
 }
 

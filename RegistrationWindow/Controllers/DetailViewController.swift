@@ -9,6 +9,10 @@ import UIKit
 
 class DetailViewController: UIViewController {
     
+    var userModel: User?
+    
+    var startVC: StartViewController?
+    
     private let mainLabel = UILabel()
     private let stackView = UIStackView()
     private let exitButton = UIButton(type: .system)
@@ -19,10 +23,19 @@ class DetailViewController: UIViewController {
         setConstraints()
         setupSubviews()
         addTarget()
+        
+        startVC?.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        mainLabel.text = "Привет, \(userModel?.nickname ?? "Привет!")"
     }
     
     @objc private func exitButtonTapped() {
+        clearValues()
         dismiss(animated: true)
+        
     }
 }
 
@@ -46,7 +59,6 @@ private extension DetailViewController {
     }
     
     func setupSubviews() {
-        mainLabel.text = "Привет!"
         mainLabel.font = .boldSystemFont(ofSize: 30)
         mainLabel.textAlignment = .center
         mainLabel.textColor = . white
@@ -64,6 +76,16 @@ private extension DetailViewController {
     
     func addTarget() {
         exitButton.addTarget(self, action: #selector(exitButtonTapped), for: .touchUpInside)
+    }
+    
+    func clearValues() {
+        startVC?.modelUser = User()
+    }
+}
+
+extension DetailViewController: StartViewControllerDelegate {
+    func getUser(modelUser: User) {
+        self.userModel = modelUser
     }
 }
 
